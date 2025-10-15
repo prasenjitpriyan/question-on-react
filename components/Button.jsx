@@ -5,7 +5,9 @@ const Button = ({ href, text, className = '' }) => {
   return (
     <Link
       href={href}
-      className={`text-sm md:text-base font-medium text-transparent bg-gradient-to-b from-white/80 to-white/20 bg-clip-text border border-white/10 px-6 py-2 rounded-full hover:border-white/40 hover:scale-105 transition-all duration-300 ${className}`}>
+      className={`btn-glass flex items-center gap-2 px-6 py-2.5 rounded-full
+                       text-white/90 hover:text-white cursor-pointer hover:scale-105
+                       active:scale-95 group ${className}`}>
       {text}
     </Link>
   );
