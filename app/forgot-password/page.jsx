@@ -3,10 +3,10 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { LucideHome } from 'lucide-react';
+import { ArrowLeft, LucideHome } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LoginForm() {
+export default function ForgotPasswordForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted');
@@ -18,13 +18,17 @@ export default function LoginForm() {
       <div className="glass-card relative mx-auto w-full max-w-md rounded-2xl p-6 md:p-8 transition-all duration-500">
         <h2 className="text-xl md:text-2xl font-bold text-center text-white mb-2">
           <span className="bg-clip-text text-transparent drop-shadow-2xl bg-gradient-to-b from-white/80 to-white/20">
-            Welcome to Question on React
+            Reset Your Password
           </span>
         </h2>
 
-        <form className="my-8" onSubmit={handleSubmit}>
+        <p className="text-center text-white/60 text-sm mb-6">
+          Enter your email and we'll send you a reset link
+        </p>
+
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Email */}
-          <LabelInputContainer className="mb-4">
+          <LabelInputContainer>
             <Label className="text-white/90 font-medium" htmlFor="email">
               Email Address
             </Label>
@@ -37,45 +41,26 @@ export default function LoginForm() {
             />
           </LabelInputContainer>
 
-          {/* Password */}
-          <LabelInputContainer className="mb-4">
-            <Label className="text-white/90 font-medium" htmlFor="password">
-              Password
-            </Label>
-            <Input
-              id="password"
-              placeholder="••••••••"
-              type="password"
-              className="input-glass text-white"
-              required
-            />
-          </LabelInputContainer>
-
           {/* Divider */}
-          <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
           {/* Submit Button */}
           <button
             className="btn-glass group/btn relative block h-10 w-full rounded-md text-white font-medium cursor-pointer"
             type="submit">
-            Log In &rarr;
+            Send Reset Link &rarr;
             <BottomGradient />
           </button>
         </form>
 
-        {/* Links */}
-        <div className="flex justify-between items-center mt-4 gap-4 text-sm md:text-base">
+        {/* Back to Login */}
+        <div className="flex justify-center items-center mt-6">
           <Link
-            href="/forgot-password"
-            className="text-white/80 underline hover:text-white hover:scale-105
-                       transition-all duration-200 cursor-pointer">
-            Forgot Password?
-          </Link>
-          <Link
-            href="/signup"
-            className="text-white/80 underline hover:text-white hover:scale-105
-                       transition-all duration-200 cursor-pointer">
-            Sign Up
+            href="/login"
+            className="flex items-center gap-2 text-white/80 hover:text-white
+                       transition-all duration-200 cursor-pointer hover:scale-105 text-sm md:text-base">
+            <ArrowLeft size={16} />
+            <span>Back to Login</span>
           </Link>
         </div>
 

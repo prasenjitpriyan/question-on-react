@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { LucideHome } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LoginForm() {
+export default function SignupForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted');
@@ -18,13 +18,45 @@ export default function LoginForm() {
       <div className="glass-card relative mx-auto w-full max-w-md rounded-2xl p-6 md:p-8 transition-all duration-500">
         <h2 className="text-xl md:text-2xl font-bold text-center text-white mb-2">
           <span className="bg-clip-text text-transparent drop-shadow-2xl bg-gradient-to-b from-white/80 to-white/20">
-            Welcome to Question on React
+            Create Your Account
           </span>
         </h2>
 
-        <form className="my-8" onSubmit={handleSubmit}>
+        <p className="text-center text-white/60 text-sm mb-6">
+          Join Question on React today
+        </p>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Name Fields */}
+          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+            <LabelInputContainer>
+              <Label className="text-white/90 font-medium" htmlFor="firstname">
+                First name
+              </Label>
+              <Input
+                id="firstname"
+                placeholder="Tyler"
+                type="text"
+                className="input-glass text-white"
+                required
+              />
+            </LabelInputContainer>
+            <LabelInputContainer>
+              <Label className="text-white/90 font-medium" htmlFor="lastname">
+                Last name
+              </Label>
+              <Input
+                id="lastname"
+                placeholder="Durden"
+                type="text"
+                className="input-glass text-white"
+                required
+              />
+            </LabelInputContainer>
+          </div>
+
           {/* Email */}
-          <LabelInputContainer className="mb-4">
+          <LabelInputContainer>
             <Label className="text-white/90 font-medium" htmlFor="email">
               Email Address
             </Label>
@@ -38,7 +70,7 @@ export default function LoginForm() {
           </LabelInputContainer>
 
           {/* Password */}
-          <LabelInputContainer className="mb-4">
+          <LabelInputContainer>
             <Label className="text-white/90 font-medium" htmlFor="password">
               Password
             </Label>
@@ -48,34 +80,74 @@ export default function LoginForm() {
               type="password"
               className="input-glass text-white"
               required
+              minLength={8}
             />
           </LabelInputContainer>
 
+          {/* Confirm Password */}
+          <LabelInputContainer>
+            <Label
+              className="text-white/90 font-medium"
+              htmlFor="confirmpassword">
+              Confirm Password
+            </Label>
+            <Input
+              id="confirmpassword"
+              placeholder="••••••••"
+              type="password"
+              className="input-glass text-white"
+              required
+              minLength={8}
+            />
+          </LabelInputContainer>
+
+          {/* Terms and Conditions */}
+          <div className="flex items-start space-x-2 pt-2">
+            <input
+              type="checkbox"
+              id="terms"
+              className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10 text-purple-600
+                         focus:ring-2 focus:ring-white/20 cursor-pointer"
+              required
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm text-white/70 cursor-pointer">
+              I agree to the{' '}
+              <Link
+                href="/terms"
+                className="text-white underline hover:text-white/80">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link
+                href="/privacy"
+                className="text-white underline hover:text-white/80">
+                Privacy Policy
+              </Link>
+            </label>
+          </div>
+
           {/* Divider */}
-          <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <div className="my-6 h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
           {/* Submit Button */}
           <button
             className="btn-glass group/btn relative block h-10 w-full rounded-md text-white font-medium cursor-pointer"
             type="submit">
-            Log In &rarr;
+            Sign up &rarr;
             <BottomGradient />
           </button>
         </form>
 
-        {/* Links */}
-        <div className="flex justify-between items-center mt-4 gap-4 text-sm md:text-base">
+        {/* Login Link */}
+        <div className="flex justify-center items-center mt-6 text-sm md:text-base">
+          <span className="text-white/70">Already have an account?</span>
           <Link
-            href="/forgot-password"
-            className="text-white/80 underline hover:text-white hover:scale-105
+            href="/login"
+            className="ml-2 text-white underline hover:text-white/80 hover:scale-105
                        transition-all duration-200 cursor-pointer">
-            Forgot Password?
-          </Link>
-          <Link
-            href="/signup"
-            className="text-white/80 underline hover:text-white hover:scale-105
-                       transition-all duration-200 cursor-pointer">
-            Sign Up
+            Log In
           </Link>
         </div>
 
