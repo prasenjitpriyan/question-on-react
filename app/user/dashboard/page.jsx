@@ -32,9 +32,10 @@ export default function UserDashboard() {
         {/* Filters */}
         <div className="glass-card rounded-2xl p-6 mb-6">
           <div className="flex flex-col gap-4">
+            {/* Search Input */}
             <div className="relative">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none z-10"
                 size={18}
               />
               <input
@@ -42,40 +43,73 @@ export default function UserDashboard() {
                 placeholder="Search questions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-glass text-white w-full pl-10"
+                className="input-glass text-white w-full h-11 pl-10 pr-4 rounded-lg"
               />
             </div>
+
+            {/* Filter Dropdowns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Difficulty Filter */}
               <div className="relative">
                 <Filter
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none z-10"
                   size={18}
                 />
                 <select
                   value={filterDifficulty}
                   onChange={(e) => setFilterDifficulty(e.target.value)}
-                  className="input-glass text-white w-full pl-10 pr-4 cursor-pointer">
+                  className="input-glass text-white w-full h-11 pl-10 pr-10 rounded-lg cursor-pointer appearance-none">
                   <option value="All">All Difficulties</option>
                   <option value="Easy">Easy</option>
                   <option value="Medium">Medium</option>
                   <option value="Hard">Hard</option>
                 </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-white/40"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
               </div>
+
+              {/* Category Filter */}
               <div className="relative">
                 <Filter
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none z-10"
                   size={18}
                 />
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="input-glass text-white w-full pl-10 pr-4 cursor-pointer">
+                  className="input-glass text-white w-full h-11 pl-10 pr-10 rounded-lg cursor-pointer appearance-none">
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat === 'All' ? 'All Categories' : cat}
                     </option>
                   ))}
                 </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-white/40"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>

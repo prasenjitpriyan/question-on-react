@@ -60,9 +60,10 @@ export default function AdminDashboard() {
 
         <div className="glass-card rounded-2xl p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
+            {/* Search Input */}
             <div className="flex-1 relative">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none z-10"
                 size={18}
               />
               <input
@@ -70,23 +71,39 @@ export default function AdminDashboard() {
                 placeholder="Search questions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-glass text-white w-full pl-10"
+                className="input-glass text-white w-full h-11 pl-10 pr-4 rounded-lg"
               />
             </div>
-            <div className="relative">
-              <Filter
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-                size={18}
-              />
+
+            {/* Filter Dropdown */}
+            <div className="relative md:w-56">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10 flex items-center">
+                <Filter className="text-white/40" size={18} />
+              </div>
               <select
                 value={filterDifficulty}
                 onChange={(e) => setFilterDifficulty(e.target.value)}
-                className="input-glass text-white pl-10 pr-4 cursor-pointer">
+                className="input-glass text-white w-full h-11 pl-10 pr-10 rounded-lg cursor-pointer appearance-none">
                 <option value="All">All Difficulties</option>
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
                 <option value="Hard">Hard</option>
               </select>
+              {/* Custom dropdown arrow */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center">
+                <svg
+                  className="w-4 h-4 text-white/40"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>

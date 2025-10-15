@@ -157,10 +157,12 @@ select.input-glass {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-  padding: 0 0.75rem;
-  height: 2.5rem;
-  border-radius: 0.375rem;
   cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 2.75rem; /* Match h-11 height for vertical centering */
+  display: flex;
+  align-items: center;
 }
 
 select.input-glass:focus {
@@ -173,6 +175,22 @@ select.input-glass:focus {
 select.input-glass option {
   background: rgb(30, 30, 60);
   color: white;
+  padding: 0.5rem;
+  line-height: normal;
+}
+
+/* Remove default select arrow in different browsers */
+select.input-glass {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+
+/* Ensure consistent height for all input types */
+input.input-glass,
+select.input-glass {
+  height: 2.75rem; /* h-11 = 44px */
 }
 
 /* Animation for showing answer */
