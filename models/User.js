@@ -27,15 +27,11 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['ADMIN', 'USER'],
-      default: 'USER',
+      enum: ['admin', 'user'],
+      default: 'user',
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
-
-UserSchema.index({ email: 1 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

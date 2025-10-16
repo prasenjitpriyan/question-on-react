@@ -12,40 +12,28 @@ export default function LoginForm() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const result = login(email, password);
+      // Pass the selected role to the login function
+      const result = await login(email, password, role);
 
       if (!result.success) {
-        setError(result.error || 'Login failed');
-        setLoading(false);
-      } else {
-        // Success - the redirect happens in the login function
-        // Keep loading state true during redirect
+        setError(result.error || 'Invalid credentials');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('An unexpected error occurred');
+      setError('Something went wrong. Please try again.');
+    } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemo = (role) => {
-    if (role === 'admin') {
-      setEmail('admin@react.com');
-      setPassword('admin123');
-    } else {
-      setEmail('user@react.com');
-      setPassword('user123');
-    }
-    setError('');
   };
 
   return (
@@ -56,33 +44,6 @@ export default function LoginForm() {
             Welcome to Question on React
           </span>
         </h2>
-
-        {/* Demo Credentials */}
-        <div className="mb-4 p-4 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-white/60 mb-3 font-medium">Quick Login:</p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => fillDemo('admin')}
-              className="flex-1 px-3 py-2 text-xs rounded-lg bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 text-purple-200 transition-all cursor-pointer">
-              Admin Login
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo('user')}
-              className="flex-1 px-3 py-2 text-xs rounded-lg bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-200 transition-all cursor-pointer">
-              User Login
-            </button>
-          </div>
-          <div className="mt-3 pt-3 border-t border-white/10">
-            <p className="text-xs text-white/50 mb-1">
-              Admin: admin@react.com / admin123
-            </p>
-            <p className="text-xs text-white/50">
-              User: user@react.com / user123
-            </p>
-          </div>
-        </div>
 
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 flex items-start gap-2">
@@ -101,7 +62,7 @@ export default function LoginForm() {
             </Label>
             <Input
               id="email"
-              placeholder="admin@react.com"
+              placeholder="you@example.com"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -127,15 +88,46 @@ export default function LoginForm() {
             />
           </LabelInputContainer>
 
-          <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          {/* New Role Selector UI */}
+          <LabelInputContainer className="mb-8">
+            <Label className="text-white/90 font-medium">Log in as</Label>
+            <div className="flex items-center gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => setRole('user')}
+                disabled={loading}
+                className={cn(
+                  'flex-1 p-2 rounded-md text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900',
+                  role === 'user'
+                    ? 'bg-cyan-500/40 border border-cyan-500 text-white shadow-lg'
+                    : 'bg-white/10 text-white/70 hover:bg-white/20 border border-transparent'
+                )}>
+                User
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('admin')}
+                disabled={loading}
+                className={cn(
+                  'flex-1 p-2 rounded-md text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900',
+                  role === 'admin'
+                    ? 'bg-cyan-500/40 border border-cyan-500 text-white shadow-lg'
+                    : 'bg-white/10 text-white/70 hover:bg-white/20 border border-transparent'
+                )}>
+                Admin
+              </button>
+            </div>
+          </LabelInputContainer>
 
           <button
             className="btn-glass group/btn relative block h-10 w-full rounded-md text-white font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
             disabled={loading}>
-            {loading ? 'Logging in...' : 'Log In →'}
+            {loading ? 'Logging in...' : `Log In →`}
             <BottomGradient />
           </button>
+
+          <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
         </form>
 
         <div className="flex justify-between items-center mt-4 gap-4 text-sm md:text-base">
@@ -168,19 +160,15 @@ export default function LoginForm() {
   );
 }
 
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
-      <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-400 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
-    </>
-  );
-};
+const BottomGradient = () => (
+  <>
+    <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
+    <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-400 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
+  </>
+);
 
-const LabelInputContainer = ({ children, className }) => {
-  return (
-    <div className={cn('flex w-full flex-col space-y-2', className)}>
-      {children}
-    </div>
-  );
-};
+const LabelInputContainer = ({ children, className }) => (
+  <div className={cn('flex w-full flex-col space-y-2', className)}>
+    {children}
+  </div>
+);
