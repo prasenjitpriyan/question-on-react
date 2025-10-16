@@ -1,8 +1,9 @@
 'use client';
 
+import BottomGradient from '@/components/BottomGradient';
+import LabelInputContainer from '@/components/LabelInputContainer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 import { AlertCircle, LucideHome } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -11,7 +12,6 @@ import { useState } from 'react';
 export default function SignupForm() {
   const router = useRouter();
 
-  // Form states
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
@@ -39,15 +39,12 @@ export default function SignupForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ firstname, lastname, email, password }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.error || 'Failed to sign up');
         setLoading(false);
         return;
       }
-
       setSuccess('Account created successfully! Redirecting to login...');
       setLoading(false);
       setTimeout(() => {
@@ -59,7 +56,6 @@ export default function SignupForm() {
       setLoading(false);
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen px-4 py-12">
       <div className="glass-card relative mx-auto w-full max-w-md rounded-2xl p-6 md:p-8 transition-all duration-500">
@@ -68,12 +64,9 @@ export default function SignupForm() {
             Create Your Account
           </span>
         </h2>
-
         <p className="text-center text-white/60 text-sm mb-6">
           Join Question on React today
         </p>
-
-        {/* Error message */}
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 flex items-start gap-2">
             <AlertCircle
@@ -83,8 +76,6 @@ export default function SignupForm() {
             <p className="text-sm text-red-200">{error}</p>
           </div>
         )}
-
-        {/* Success message */}
         {success && (
           <div className="mb-4 p-3 rounded-lg bg-green-500/20 border border-green-500/30 flex items-start gap-2">
             <AlertCircle
@@ -96,7 +87,6 @@ export default function SignupForm() {
         )}
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Name Fields */}
           <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
             <LabelInputContainer>
               <Label className="text-white/90 font-medium" htmlFor="firstname">
@@ -129,8 +119,6 @@ export default function SignupForm() {
               />
             </LabelInputContainer>
           </div>
-
-          {/* Email */}
           <LabelInputContainer>
             <Label className="text-white/90 font-medium" htmlFor="email">
               Email Address
@@ -146,8 +134,6 @@ export default function SignupForm() {
               disabled={loading}
             />
           </LabelInputContainer>
-
-          {/* Password */}
           <LabelInputContainer>
             <Label className="text-white/90 font-medium" htmlFor="password">
               Password
@@ -164,8 +150,6 @@ export default function SignupForm() {
               disabled={loading}
             />
           </LabelInputContainer>
-
-          {/* Confirm Password */}
           <LabelInputContainer>
             <Label
               className="text-white/90 font-medium"
@@ -184,8 +168,6 @@ export default function SignupForm() {
               disabled={loading}
             />
           </LabelInputContainer>
-
-          {/* Terms */}
           <div className="flex items-start space-x-2 pt-2">
             <input
               type="checkbox"
@@ -211,11 +193,7 @@ export default function SignupForm() {
               </Link>
             </label>
           </div>
-
-          {/* Divider */}
           <div className="my-6 h-[1px] w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-
-          {/* Submit Button */}
           <button
             className="btn-glass group/btn relative block h-10 w-full rounded-md text-white font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
@@ -224,8 +202,6 @@ export default function SignupForm() {
             <BottomGradient />
           </button>
         </form>
-
-        {/* Login Link */}
         <div className="flex justify-center items-center mt-6 text-sm md:text-base">
           <span className="text-white/70">Already have an account?</span>
           <Link
@@ -234,8 +210,6 @@ export default function SignupForm() {
             Log In
           </Link>
         </div>
-
-        {/* Home Button */}
         <div className="flex justify-center mt-8">
           <Link
             href="/"
@@ -252,20 +226,3 @@ export default function SignupForm() {
     </div>
   );
 }
-
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
-      <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-400 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
-    </>
-  );
-};
-
-const LabelInputContainer = ({ children, className }) => {
-  return (
-    <div className={cn('flex w-full flex-col space-y-2', className)}>
-      {children}
-    </div>
-  );
-};
