@@ -1,37 +1,34 @@
-// app/api/auth/signup/route.js
 import connectDB from '@/lib/mongodb';
+import { UserValidationSchema } from '@/lib/validators/user';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
+import { NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 export async function POST(req) {
   try {
-    await connectDB();
-    const { firstname, lastname, email, password } = await req.json();
+    const body = await req.json();
+    const validatedData = UserValidationSchema.parse(body);
 
-    if (!firstname || !lastname || !email || !password) {
-      return new Response(
-        JSON.stringify({ error: 'All fields are required' }),
-        { status: 400 }
+    await connectDB();
+
+    const existingUser = await User.findOne({ email: validatedData.email });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'A user with this email already exists' },
+        { status: 409 }
       );
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return new Response(JSON.stringify({ error: 'User already exists' }), {
-        status: 400,
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
     const newUser = await User.create({
-      firstname,
-      lastname,
-      email,
+      firstname: validatedData.firstname,
+      lastname: validatedData.lastname,
+      email: validatedData.email,
       password: hashedPassword,
     });
 
-    // Hide password in response
     const userResponse = {
       id: newUser._id,
       firstname: newUser.firstname,
@@ -39,17 +36,29 @@ export async function POST(req) {
       email: newUser.email,
     };
 
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         message: 'User created successfully',
         user: userResponse,
-      }),
+      },
       { status: 201 }
     );
-  } catch (err) {
-    console.error('Signup error:', err);
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-      status: 500,
-    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const errorDetails = error.errors.map((err) => ({
+        field: err.path.join('.'),
+        message: err.message,
+      }));
+      return NextResponse.json(
+        { error: 'Invalid input', details: errorDetails },
+        { status: 400 }
+      );
+    }
+
+    console.error('Signup Error:', error);
+    return NextResponse.json(
+      { error: 'An internal server error occurred' },
+      { status: 500 }
+    );
   }
 }

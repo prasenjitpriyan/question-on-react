@@ -23,7 +23,6 @@ export async function POST(req) {
       );
     }
 
-    // Don't send password in response
     const userResponse = {
       id: user._id,
       firstname: user.firstname,

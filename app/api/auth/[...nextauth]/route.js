@@ -1,4 +1,5 @@
 import connectDB from '@/lib/mongodb';
+import { LoginValidationSchema } from '@/lib/validators/user';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
@@ -8,51 +9,41 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
-      // 1. Tell NextAuth to expect 'role' from the form
       credentials: {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
         role: { label: 'Role', type: 'text' },
       },
       async authorize(credentials) {
-        // Ensure all credentials are provided
-        if (
-          !credentials?.email ||
-          !credentials?.password ||
-          !credentials?.role
-        ) {
-          throw new Error('Missing credentials');
+        try {
+          const { email, password, role } =
+            LoginValidationSchema.parse(credentials);
+
+          await connectDB();
+          const user = await User.findOne({ email });
+
+          if (!user) {
+            throw new Error('Invalid email or password');
+          }
+
+          if (user.role.toLowerCase() !== role.toLowerCase()) {
+            throw new Error('Access denied for the selected role');
+          }
+
+          const isMatch = await bcrypt.compare(password, user.password);
+          if (!isMatch) {
+            throw new Error('Invalid email or password');
+          }
+
+          return {
+            id: user._id,
+            email: user.email,
+            name: user.firstname,
+            role: user.role,
+          };
+        } catch (error) {
+          throw new Error(error.message || 'Invalid credentials');
         }
-
-        await connectDB();
-        const user = await User.findOne({ email: credentials.email });
-
-        if (!user) {
-          throw new Error('Invalid email or password');
-        }
-
-        // 2. IMPORTANT: Check if the selected role matches the user's role in the DB
-        if (user.role.toLowerCase() !== credentials.role.toLowerCase()) {
-          throw new Error('Access denied for the selected role');
-        }
-
-        const isMatch = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isMatch) {
-          throw new Error('Invalid email or password');
-        }
-
-        // 3. Return the user object, including the role, on success
-        // This object is passed to the JWT callback
-        return {
-          id: user._id,
-          email: user.email,
-          name: user.firstname, // Or whatever name property you use
-          role: user.role,
-        };
       },
     }),
   ],
@@ -62,12 +53,10 @@ export const authOptions = {
   },
 
   pages: {
-    // Make sure this points to your actual login page
     signIn: '/login',
   },
 
   callbacks: {
-    // 4. Add the user's role to the JWT token
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -75,7 +64,6 @@ export const authOptions = {
       }
       return token;
     },
-    // 5. Add the role from the token to the session object
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
