@@ -1,59 +1,61 @@
+import { sendEmail } from '@/lib/mailer';
 import connectDB from '@/lib/mongodb';
 import { ForgotPasswordSchema } from '@/lib/validators/user';
 import User from '@/models/User';
 import crypto from 'crypto';
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { ZodError } from 'zod';
 
 export async function POST(req) {
   try {
     await connectDB();
+
     const body = await req.json();
     const { email } = ForgotPasswordSchema.parse(body);
+
     const user = await User.findOne({ email });
     if (!user) {
+      // Generic response to prevent user enumeration
       return NextResponse.json({
         message:
           'If an account with this email exists, a password reset link has been sent.',
       });
     }
+
+    // Generate reset token & expiration
     const resetToken = crypto.randomBytes(32).toString('hex');
     const passwordResetToken = crypto
       .createHash('sha256')
       .update(resetToken)
       .digest('hex');
-    const passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    const passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     user.passwordResetToken = passwordResetToken;
     user.passwordResetExpires = passwordResetExpires;
     await user.save();
 
+    // Construct reset URL
     const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
-    const emailBody = `
-      <h1>Password Reset Request</h1>
+
+    // Email HTML template
+    const html = `
+      <h2>Password Reset Request</h2>
+      <p>Hello ${user.firstname || ''},</p>
       <p>You are receiving this email because a password reset was requested for your account.</p>
-      <p>Please click the link below to reset your password. This link will expire in 10 minutes.</p>
-      <a href="${resetUrl}" target="_blank">Reset Your Password</a>
-      <p>If you did not request this, please ignore this email.</p>
+      <p><a href="${resetUrl}" target="_blank" style="color:#007bff;">Reset Your Password</a></p>
+      <p>This link will expire in 10 minutes. If you didn’t request this, please ignore this email.</p>
     `;
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_SERVER_HOST,
-      port: process.env.EMAIL_SERVER_PORT,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_SERVER_USER,
-        pass: process.env.EMAIL_SERVER_PASSWORD,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
+    // Send email using mailer utility
+    const emailResult = await sendEmail({
       to: user.email,
       subject: 'Password Reset Request',
-      html: emailBody,
+      html,
     });
+
+    if (!emailResult.success) {
+      throw new Error(emailResult.error || 'Failed to send reset email');
+    }
 
     return NextResponse.json({
       message:
@@ -66,7 +68,8 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    console.error('Forgot Password Error:', error);
+
+    console.error('❌ Forgot Password Error:', error);
     return NextResponse.json(
       { error: 'An internal error occurred' },
       { status: 500 }
