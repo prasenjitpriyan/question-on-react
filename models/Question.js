@@ -1,44 +1,53 @@
 import mongoose from 'mongoose';
 
+const ContentBlockSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['paragraph', 'heading', 'code', 'image', 'example'],
+    required: true,
+  },
+  value: {
+    type: String,
+    required: function () {
+      return this.type !== 'image';
+    },
+  },
+  alt: String,
+  caption: String,
+  language: String,
+  level: Number,
+  blocks: [this],
+});
+
 const QuestionSchema = new mongoose.Schema(
   {
-    question: {
+    title: {
       type: String,
-      required: [true, 'Question is required'],
+      required: true,
+      unique: true,
       trim: true,
     },
-    answer: {
+    slug: {
       type: String,
-      required: [true, 'Answer is required'],
-    },
-    difficulty: {
-      type: String,
-      enum: ['EASY', 'MEDIUM', 'HARD'],
-      default: 'MEDIUM',
+      required: true,
+      unique: true,
+      trim: true,
     },
     category: {
       type: String,
-      required: [true, 'Category is required'],
+      required: true,
       trim: true,
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+    tags: [String],
 
-QuestionSchema.index({ difficulty: 1 });
-QuestionSchema.index({ category: 1 });
-QuestionSchema.index({ createdAt: -1 });
-QuestionSchema.index({ tags: 1 });
+    answerContent: {
+      type: [ContentBlockSchema],
+      required: true,
+    },
+    mainImage: String,
+  },
+  { timestamps: true }
+);
 
 export default mongoose.models.Question ||
   mongoose.model('Question', QuestionSchema);
