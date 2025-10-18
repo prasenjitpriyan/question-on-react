@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/lib/auth-context';
 import { cn } from '@/lib/utils';
-import { List, LogOut, LucideHome, PlusCircle } from 'lucide-react';
+import { List, LogOut, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -29,20 +29,12 @@ export default function AdminDashboardLayout({ children }) {
                 Welcome back, {user?.name}
               </p>
             </div>
-            <div className="flex gap-3">
-              <Link
-                href="/"
-                className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-                <LucideHome size={18} />
-                <span className="hidden sm:inline">Home</span>
-              </Link>
-              <button
-                onClick={logout}
-                className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-                <LogOut size={18} />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
+            <button
+              onClick={logout}
+              className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
+              <LogOut size={18} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
           </div>
         </div>
 
