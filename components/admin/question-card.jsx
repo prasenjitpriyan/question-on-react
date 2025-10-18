@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Check, Copy, Eye, Pencil, Trash2 } from 'lucide-react';
+import { Check, Copy, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -71,7 +71,7 @@ const ContentBlockRenderer = ({ block }) => {
   }
 };
 
-export default function QuestionCard({ question, onEdit, onDelete, onView }) {
+export default function QuestionCard({ question, onEdit, onDelete }) {
   const [showAnswer, setShowAnswer] = useState(false);
 
   const { title, difficulty, category, tags, answerContent, createdAt, slug } =
@@ -141,15 +141,7 @@ export default function QuestionCard({ question, onEdit, onDelete, onView }) {
           </p>
         </div>
 
-        <div className="flex flex-row md:flex-col gap-2 flex-shrink-0">
-          {' '}
-          <button
-            onClick={() => onView(question)}
-            title="View Question Details"
-            className="btn-glass flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 transition-transform">
-            <Eye size={16} />
-            <span className="text-sm hidden md:inline">View</span>
-          </button>
+        <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={() => onEdit(question)}
             title="Edit Question"
