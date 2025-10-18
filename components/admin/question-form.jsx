@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn, slugify } from '@/lib/utils';
-import { Plus, Trash2 } from 'lucide-react';
+import { Loader2, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const ContentBlockInputs = ({ block, index, onChange }) => {
@@ -16,7 +16,7 @@ const ContentBlockInputs = ({ block, index, onChange }) => {
       return (
         <Input
           name="value"
-          value={block.value}
+          value={block.value || ''}
           onChange={handleChange}
           placeholder="Heading text..."
           className="input-glass text-white text-lg font-semibold"
@@ -34,47 +34,27 @@ const ContentBlockInputs = ({ block, index, onChange }) => {
           />
           <textarea
             name="value"
-            value={block.value}
+            value={block.value || ''}
             onChange={handleChange}
             placeholder="Your code snippet..."
             className="input-glass text-white min-h-[150px] resize-y w-full font-mono text-sm"
           />
         </div>
       );
-    case 'image':
-      return (
-        <div className="space-y-2">
-          <Input
-            name="value"
-            value={block.value}
-            onChange={handleChange}
-            placeholder="Image URL..."
-            className="input-glass text-white"
-          />
-          <Input
-            name="alt"
-            value={block.alt || ''}
-            onChange={handleChange}
-            placeholder="Alt text (for accessibility)"
-            className="input-glass text-white"
-          />
-        </div>
-      );
-
     case 'list': {
       const handleItemChange = (itemIndex, newValue) => {
-        const newItems = [...block.items];
+        const newItems = [...(block.items || [])];
         newItems[itemIndex] = newValue;
         onChange(index, 'items', newItems);
       };
 
       const addItem = () => {
-        const newItems = [...block.items, ''];
+        const newItems = [...(block.items || []), ''];
         onChange(index, 'items', newItems);
       };
 
       const removeItem = (itemIndex) => {
-        if (block.items.length <= 1) return;
+        if (!block.items || block.items.length <= 1) return;
         const newItems = block.items.filter((_, i) => i !== itemIndex);
         onChange(index, 'items', newItems);
       };
@@ -89,13 +69,13 @@ const ContentBlockInputs = ({ block, index, onChange }) => {
                 value={item}
                 onChange={(e) => handleItemChange(itemIndex, e.target.value)}
                 placeholder="List item..."
-                className="input-glass text-white"
+                className="input-glass text-white flex-grow"
               />
-              {block.items.length > 1 && (
+              {block.items && block.items.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeItem(itemIndex)}
-                  className="text-red-500 hover:text-red-400 p-1 rounded-full">
+                  className="text-red-500 hover:text-red-400 p-1 rounded-full flex-shrink-0">
                   <Trash2 size={16} />
                 </button>
               )}
@@ -104,8 +84,8 @@ const ContentBlockInputs = ({ block, index, onChange }) => {
           <button
             type="button"
             onClick={addItem}
-            className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-            <Plus size={16} /> Add List Item
+            className="btn-glass flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 text-sm">
+            <Plus size={14} /> Add List Item
           </button>
         </div>
       );
@@ -116,7 +96,7 @@ const ContentBlockInputs = ({ block, index, onChange }) => {
       return (
         <textarea
           name="value"
-          value={block.value}
+          value={block.value || ''}
           onChange={handleChange}
           placeholder="Paragraph text..."
           className="input-glass text-white min-h-[120px] resize-y w-full"
@@ -124,6 +104,7 @@ const ContentBlockInputs = ({ block, index, onChange }) => {
       );
   }
 };
+
 export default function QuestionForm({
   question,
   onSubmit,
@@ -151,6 +132,15 @@ export default function QuestionForm({
             ? question.answerContent
             : [{ type: 'paragraph', value: '' }],
         tags: question.tags?.join(', ') || '',
+      });
+    } else {
+      setFormData({
+        title: '',
+        slug: '',
+        category: '',
+        difficulty: 'Easy',
+        answerContent: [{ type: 'paragraph', value: '' }],
+        tags: '',
       });
     }
   }, [question]);
@@ -184,9 +174,6 @@ export default function QuestionForm({
       case 'code':
         newBlock = { type: 'code', value: '', language: 'javascript' };
         break;
-      case 'image':
-        newBlock = { type: 'image', value: '', alt: '' };
-        break;
       case 'list':
         newBlock = { type: 'list', items: [''] };
         break;
@@ -197,7 +184,6 @@ export default function QuestionForm({
       default:
         newBlock = { type: 'paragraph', value: '' };
     }
-
     setFormData((prev) => ({
       ...prev,
       answerContent: [...prev.answerContent, newBlock],
@@ -228,6 +214,9 @@ export default function QuestionForm({
     <form
       onSubmit={handleFormSubmit}
       className="glass-card rounded-2xl p-6 space-y-6">
+      <h2 className="text-2xl font-bold text-white mb-2">
+        {question ? 'Edit Question' : 'Add New Question'}
+      </h2>
       <LabelInputContainer>
         <Label className="text-white/90" htmlFor="title">
           Title
@@ -277,7 +266,7 @@ export default function QuestionForm({
             value={formData.difficulty}
             onChange={handleChange}
             required
-            className="input-glass pl-3 text-white h-11">
+            className="input-glass pl-3 text-white h-11 rounded-lg">
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
@@ -297,7 +286,6 @@ export default function QuestionForm({
           />
         </LabelInputContainer>
       </div>
-
       <div>
         <Label className="block text-lg font-medium text-white/90 mb-3">
           Answer Content
@@ -306,8 +294,8 @@ export default function QuestionForm({
           {formData.answerContent.map((block, index) => (
             <div
               key={index}
-              className="glass-card rounded-lg p-4 border border-white/10 relative">
-              <Label className="text-white/60 text-xs uppercase font-semibold">
+              className="glass-card rounded-lg p-4 border border-white/10 relative pt-6">
+              <Label className="absolute top-1 left-3 text-white/60 text-xs uppercase font-semibold tracking-wider">
                 {block.type}
               </Label>
               <ContentBlockInputs
@@ -319,7 +307,7 @@ export default function QuestionForm({
                 <button
                   type="button"
                   onClick={() => deleteBlock(index)}
-                  className="absolute -top-3 -right-3 p-1.5 bg-red-600 rounded-full text-white hover:bg-red-500 transition-all"
+                  className="absolute -top-3 -right-3 p-1.5 bg-red-600 rounded-full text-white hover:bg-red-500 transition-all shadow-md"
                   aria-label="Delete block">
                   <Trash2 size={14} />
                 </button>
@@ -327,41 +315,34 @@ export default function QuestionForm({
             </div>
           ))}
         </div>
-
         <div className="flex flex-wrap gap-2 mt-4">
           <button
             type="button"
             onClick={() => addBlock('paragraph')}
-            className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-            <Plus size={16} /> Add Paragraph
+            className="btn-glass flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 text-sm">
+            <Plus size={14} /> Paragraph
           </button>
           <button
             type="button"
             onClick={() => addBlock('heading')}
-            className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-            <Plus size={16} /> Add Heading
+            className="btn-glass flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 text-sm">
+            <Plus size={14} /> Heading
           </button>
           <button
             type="button"
             onClick={() => addBlock('code')}
-            className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-            <Plus size={16} /> Add Code
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock('image')}
-            className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-            <Plus size={16} /> Add Image
+            className="btn-glass flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 text-sm">
+            <Plus size={14} /> Code
           </button>
           <button
             type="button"
             onClick={() => addBlock('list')}
-            className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
-            <Plus size={16} /> Add List
+            className="btn-glass flex items-center gap-2 px-3 py-1.5 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 text-sm">
+            <Plus size={14} /> List
           </button>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-4 pt-4 border-t border-white/10">
+      <div className="flex items-center justify-end gap-4 pt-4 border-t border-white/10 mt-6">
         {onCancel && (
           <button
             type="button"
@@ -373,7 +354,9 @@ export default function QuestionForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-glass flex items-center gap-2 px-4 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95">
+          className="bg-white/10 hover:bg-white/20 border border-white/20 h-10 px-6 rounded-lg text-white font-medium cursor-pointer transition-all">
+          {' '}
+          {isSubmitting && <Loader2 size={16} className="animate-spin" />}{' '}
           {isSubmitting
             ? 'Submitting...'
             : question

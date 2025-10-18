@@ -16,6 +16,7 @@ export default function AddQuestionPage() {
   const handleSubmit = async (formData) => {
     setLoading(true);
     setError('');
+    console.log('Submitting Data:', JSON.stringify(formData, null, 2));
 
     try {
       const res = await fetch('/api/questions', {

@@ -3,17 +3,15 @@ import mongoose from 'mongoose';
 const ContentBlockSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ['paragraph', 'heading', 'code', 'image', 'example', 'list'],
+    enum: ['paragraph', 'heading', 'code', 'example', 'list'],
     required: true,
   },
   value: {
     type: String,
     required: function () {
-      return !['image', 'list'].includes(this.type);
+      return !['list'].includes(this.type);
     },
   },
-  alt: String,
-  caption: String,
   language: String,
   level: Number,
   items: [String],
@@ -56,7 +54,6 @@ const QuestionSchema = new mongoose.Schema(
       type: [ContentBlockSchema],
       required: true,
     },
-    mainImage: String,
   },
   { timestamps: true }
 );
