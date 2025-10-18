@@ -42,7 +42,6 @@ export async function GET() {
   try {
     await connectDB();
     const questions = await Question.find({}).sort({ createdAt: -1 });
-
     return NextResponse.json(questions, { status: 200 });
   } catch (error) {
     console.error('Error fetching all questions:', error);

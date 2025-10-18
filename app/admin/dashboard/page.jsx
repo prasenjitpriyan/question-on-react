@@ -181,7 +181,7 @@ export default function AdminDashboard() {
           ) : (
             filteredQuestions.map((question) => (
               <QuestionCard
-                key={question._id} // Use MongoDB _id
+                key={question._id}
                 question={question}
                 onEdit={() => handleEdit(question)}
                 onDelete={() => handleDelete(question)}
