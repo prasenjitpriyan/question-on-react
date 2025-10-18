@@ -1,7 +1,6 @@
 import Providers from '@/components/Providers';
 import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation';
 import { AuthProvider } from '@/lib/auth-context';
-import { QuestionsProvider } from '@/lib/questions-context';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
@@ -27,22 +26,20 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <AuthProvider>
-            <QuestionsProvider>
-              <BackgroundGradientAnimation
-                gradientBackgroundStart="rgb(0, 17, 82)"
-                gradientBackgroundEnd="rgb(108, 0, 162)"
-                firstColor="18, 113, 255"
-                secondColor="80, 200, 255"
-                thirdColor="221, 74, 255"
-                fourthColor="200, 50, 100"
-                fifthColor="100, 220, 255"
-                pointerColor="140, 100, 255"
-                size="90%"
-                blendingValue="hard-light"
-                interactive={true}>
-                {children}
-              </BackgroundGradientAnimation>
-            </QuestionsProvider>
+            <BackgroundGradientAnimation
+              gradientBackgroundStart="rgb(0, 17, 82)"
+              gradientBackgroundEnd="rgb(108, 0, 162)"
+              firstColor="18, 113, 255"
+              secondColor="80, 200, 255"
+              thirdColor="221, 74, 255"
+              fourthColor="200, 50, 100"
+              fifthColor="100, 220, 255"
+              pointerColor="140, 100, 255"
+              size="90%"
+              blendingValue="hard-light"
+              interactive={true}>
+              {children}
+            </BackgroundGradientAnimation>
           </AuthProvider>
         </Providers>
       </body>
