@@ -37,10 +37,9 @@ export const ContentBlockRenderer = ({ block }) => {
               <span className="text-xs">{copied ? 'Copied!' : 'Copy'}</span>
             </button>
           </div>
-          {/* Syntax Highlighter */}
           <SyntaxHighlighter
             language={language}
-            style={dracula} // Apply theme
+            style={dracula}
             customStyle={{
               margin: 0,
               padding: '1rem',
@@ -63,7 +62,6 @@ export const ContentBlockRenderer = ({ block }) => {
           ))}
         </ul>
       );
-    // Add 'example' if needed
     default:
       return null;
   }
