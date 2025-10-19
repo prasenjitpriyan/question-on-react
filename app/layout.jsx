@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`overflow-y-auto hide-scrollbar ${geistSans.variable} ${geistMono.variable} antialiased bg-black/80`}>
+        className={`overflow-y-auto hide-scrollbar ${geistSans.variable} ${geistMono.variable} antialiased bg-[#0A0A0A]`}>
         <Providers>
           <AuthProvider>
             {children}
