@@ -185,7 +185,6 @@ export default function AdminDashboard() {
                 question={question}
                 onEdit={() => handleEdit(question)}
                 onDelete={() => handleDelete(question)}
-                onView={() => router.push(`/questions/${question.slug}`)}
               />
             ))
           )}

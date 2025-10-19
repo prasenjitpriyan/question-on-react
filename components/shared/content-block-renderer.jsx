@@ -3,14 +3,13 @@
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Or your preferred theme
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export const ContentBlockRenderer = ({ block }) => {
   switch (block.type) {
     case 'paragraph':
       return <p className="mb-4 last:mb-0 leading-relaxed">{block.value}</p>;
     case 'heading':
-      // Use appropriate heading level based on context (h4/h5 good for cards/viewers)
       return (
         <h4 className="text-lg font-semibold text-cyan-400 mt-5 mb-2">
           {block.value}
@@ -28,9 +27,6 @@ export const ContentBlockRenderer = ({ block }) => {
 
       return (
         <div className="relative group my-4 rounded-md overflow-hidden bg-[#282a36]">
-          {' '}
-          {/* Container */}
-          {/* Header */}
           <div className="flex justify-between items-center px-4 py-1.5 bg-gray-700/80 text-xs text-gray-300">
             <span>{language}</span>
             <button

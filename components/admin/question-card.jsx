@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, Eye, Pencil, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ContentBlockRenderer } from '../shared/content-block-renderer';
 
@@ -53,7 +53,7 @@ export default function QuestionCard({ question, onEdit, onDelete, onView }) {
           </h3>
           <button
             onClick={() => setShowAnswer(!showAnswer)}
-            className="flex items-center gap-1 text-sm text-cyan-400 hover:text-cyan-300 transition-colors mb-2 cursor-pointer font-medium" // Consistent style
+            className="flex items-center gap-1 text-sm text-cyan-400 hover:text-cyan-300 transition-colors mb-2 cursor-pointer font-medium"
             aria-label="Toggle Answer Visibility"
             aria-expanded={showAnswer}>
             {showAnswer ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -70,14 +70,7 @@ export default function QuestionCard({ question, onEdit, onDelete, onView }) {
             Created: {new Date(createdAt).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex flex-row md:flex-col gap-2 flex-shrink-0">
-          <button
-            onClick={() => onView(question)}
-            title="View Question Details"
-            className="btn-glass flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95 transition-transform">
-            <Eye size={16} />
-            <span className="text-sm hidden md:inline">View</span>
-          </button>
+        <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={() => onEdit(question)}
             title="Edit Question"

@@ -57,7 +57,7 @@ export default function QuestionViewer({ question }) {
         {showAnswer ? 'Hide Answer' : 'Show Answer'}
       </button>
       {showAnswer && (
-        <div className="text-white/80 text-sm bg-black/20 p-4 rounded-lg border border-white/10 mt-2 prose prose-sm sm:prose-base prose-invert max-w-none prose-pre:bg-transparent prose-pre:p-0">
+        <div className="text-white/80 text-sm bg-black/20 p-3 rounded-lg border border-white/10 mt-2 prose prose-sm prose-invert max-w-none prose-pre:bg-transparent prose-pre:p-0">
           {answerContent.map((block, index) => (
             <ContentBlockRenderer key={index} block={block} />
           ))}
